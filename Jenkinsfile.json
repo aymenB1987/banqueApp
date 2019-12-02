@@ -2,36 +2,11 @@
 pipeline {
     agent any
     stages {
-        stage ('Checkout') {
+        stage ('pull') {
             steps {
-                bat checkout scm
+                bat echo 'pull'
             }
         }
-        stage ('Download lcov converter') {
-            steps {
-                bat sh "curl -O https://raw.githubusercontent.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py"
-            }
-        }
-        stage ('Flutter Doctor') {
-            steps {
-               bat sh "flutter doctor"
-            }
-        }
-        stage('Test') {
-            steps {
-               bat sh "flutter test --coverage"
-            }
-            post {
-                always {
-                  bat  sh "python3 lcov_cobertura.py coverage/lcov.info --output coverage/coverage.xml"
-                  bat  step([$class: 'CoberturaPublisher', coberturaReportFile: 'coverage/coverage.xml'])
-                }
-            }
-        }
-        stage('Run Analyzer') {
-            steps {
-               bat sh "dartanalyzer --options analysis_options.yaml ."
-            }
-        }
+      
     }
 }
