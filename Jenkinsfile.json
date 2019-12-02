@@ -4,33 +4,33 @@ pipeline {
     stages {
         stage ('Checkout') {
             steps {
-                checkout scm
+                bat checkout scm
             }
         }
         stage ('Download lcov converter') {
             steps {
-                sh "curl -O https://raw.githubusercontent.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py"
+                bat sh "curl -O https://raw.githubusercontent.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py"
             }
         }
         stage ('Flutter Doctor') {
             steps {
-                sh "flutter doctor"
+               bat sh "flutter doctor"
             }
         }
         stage('Test') {
             steps {
-                sh "flutter test --coverage"
+               bat sh "flutter test --coverage"
             }
             post {
                 always {
-                    sh "python3 lcov_cobertura.py coverage/lcov.info --output coverage/coverage.xml"
-                    step([$class: 'CoberturaPublisher', coberturaReportFile: 'coverage/coverage.xml'])
+                  bat  sh "python3 lcov_cobertura.py coverage/lcov.info --output coverage/coverage.xml"
+                  bat  step([$class: 'CoberturaPublisher', coberturaReportFile: 'coverage/coverage.xml'])
                 }
             }
         }
         stage('Run Analyzer') {
             steps {
-                sh "dartanalyzer --options analysis_options.yaml ."
+               bat sh "dartanalyzer --options analysis_options.yaml ."
             }
         }
     }
